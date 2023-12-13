@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Requests\SeekerRegistrationRequest;
+use App\Http\Requests\RegistrationFormRequest;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -13,6 +13,7 @@ class UserController extends Controller
 {
 
     const JOB_SEEKER = "job_seeker";
+    const JOB_POSTER = "employer";
 
     public function index()
     {
@@ -24,7 +25,12 @@ class UserController extends Controller
         return view("user.register.seeker");
     }
 
-    public function storeSeeker(SeekerRegistrationRequest $request)
+    public function createEmployer()
+    {
+        return view("company.register.index");
+    }
+
+    public function storeSeeker(RegistrationFormRequest $request)
     {
         $request->validated();
 
@@ -35,7 +41,22 @@ class UserController extends Controller
             'role' => self::JOB_SEEKER
         ]);
 
-        return redirect()->route('/login')->with('success', 'Registered Successfully!!');
+        return redirect()->route('login')->with('success', 'Registered Successfully!!');
+    }
+
+    public function storeEmployer(RegistrationFormRequest $request)
+    {
+        $request->validated();
+
+        User::create([
+            "name" => $request->name,
+            "email" => $request->email,
+            "password" => bcrypt($request->password),
+            'role' => self::JOB_POSTER,
+            "user_trial" => now()->addWeek()
+        ]);
+
+        return redirect()->route('login')->with('success', 'Registered Successfully!!');
     }
 
     public function login()
@@ -53,7 +74,7 @@ class UserController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            return redirect()->intended('dashboard');
+            return redirect()->intended('dashboard')->with('success', "Successfully LoggedIn!");
         }
 
         return "Wrong email or password";

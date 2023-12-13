@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <form action="/register/seeker" method="POST">
+    <form action="{{ route('store.seeker') }}" method="POST">
         <h1>Register</h1>
 
         <h3>Looking For Job?</h3>

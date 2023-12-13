@@ -22,14 +22,22 @@ Route::get('/', function () {
 
 Route::group(['prefix' => '/register'], function () {
     Route::get('/', [UserController::class, 'index'])->name('register');
-    Route::get("/seeker", [UserController::class, "createSeeker"])->name("create.seeker");
-    Route::post("/seeker", [UserController::class, "storeSeeker"])->name("store.seeker");
+
+    Route::group(['prefix' => '/seeker'], function () {
+        Route::get("/", [UserController::class, "createSeeker"])->name("create.seeker");
+        Route::post("/", [UserController::class, "storeSeeker"])->name("store.seeker");
+    })->name('register.seeker.group');
+
+    Route::group(['prefix' => '/employer'], function () {
+        Route::get("/", [UserController::class, "createEmployer"])->name("create.employer");
+        Route::post("/", [UserController::class, "storeEmployer"])->name("store.employer");
+    });
+
 })->name("register.group");
 
 Route::group(['prefix' => '/login'], function () {
     Route::get("/", [UserController::class, "login"])->name('login');
     Route::post("/", [UserController::class, "postLogin"])->name('login.post');
-
 })->name('login.group');
 
 Route::post("/logout", [UserController::class, "logout"])->name('logout');
